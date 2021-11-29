@@ -1,0 +1,13 @@
+db:
+  user: "{{ vault.db.user }}"
+  pass: "{{ vault.db.pass }}"
+  host: "{{ vault.db.host }}"
+  port: "{{ vault.db.port }}"
+  database: "{{ vault.db.database }}"
+
+redmine:
+  env_filepath: /root/.env
+
+servers:
+  host1: 104.131.46.61
+  host2: 143.198.19.134

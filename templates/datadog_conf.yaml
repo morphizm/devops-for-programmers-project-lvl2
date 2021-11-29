@@ -1,0 +1,5 @@
+init_config:
+
+instances:
+  - name: Redmine site
+    url: https://xyiinc.xyz/

@@ -1,0 +1,60 @@
+- hosts: all
+  gather_facts: yes
+  tasks:
+    - name: update apt
+      apt: update_cache=yes
+      become: yes
+
+    - name: install packages
+      apt:
+        state: present
+        pkg:
+          - python3
+          - python3-pip
+          - docker.io
+      become: yes
+      tags:
+        - packages
+
+    - name: install docker-py
+      become: True
+      pip:
+        executable: pip3
+        name:
+          - docker-py
+      tags:
+        - packages
+
+    - name: Create env file from template
+      template:
+        src: templates/env
+        dest: "{{ redmine.env_filepath }}"
+      tags:
+        - redmine
+
+    - name: Start redmine container
+      become: yes
+      community.docker.docker_container:
+        name: some-redmine
+        state: started
+        image: redmine:4.2.3
+        ports:
+          - "80:3000"
+        env_file: "{{ redmine.env_filepath }}"
+      tags:
+        - redmine
+
+- hosts: webservers
+  pre_tasks:
+    - name: Create http_check dir
+      file:
+        path: /etc/datadog-agent/conf.d/http_check.d
+        state: directory
+    - name: Create http_check config
+      template:
+        src: templates/datadog_conf.yaml
+        dest: /etc/datadog-agent/conf.d/http_check.d/conf.yaml
+  roles:
+    - { role: datadog.datadog, become: yes }
+  vars:
+    datadog_api_key: "{{ vault.datalog.api_key }}"
