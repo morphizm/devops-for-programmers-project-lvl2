@@ -5,8 +5,6 @@ ansible-playbook:
 	ansible-playbook -i inventory.ini playbook.yml --vault-pass-file vault-password
 
 ansible-galaxy-install:
-	ansible-galaxy install geerlingguy.pip
-	ansible-galaxy install datadog.datadog
 	ansible-galaxy install -r requirements.yml
 
 encrypt-vault:
